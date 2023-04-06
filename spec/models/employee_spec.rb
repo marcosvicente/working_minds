@@ -12,10 +12,9 @@
 require 'rails_helper'
 
 RSpec.describe Employee, type: :model do
-  subject { create(:employee) }
+  subject { build(:employee) }
 
   it { should validate_presence_of(:name) }
   it { should validate_presence_of(:role) }
   it { should validate_presence_of(:date_contract) }
-
 end

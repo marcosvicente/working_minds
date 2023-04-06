@@ -10,5 +10,7 @@
 #  updated_at    :datetime         not null
 #
 class Employee < ApplicationRecord
+  has_many :vacation
+  
   validates :name, :role, :date_contract, presence: true
 end
