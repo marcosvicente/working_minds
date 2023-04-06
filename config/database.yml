@@ -1,0 +1,22 @@
+# PostgreSQL. Versions 9.3 and up are supported.
+default: &default
+  adapter: postgresql
+  username: <%= ENV['USERNAME_DATABASE_PASSWORD'] %>
+  password: <%= ENV['PASSWORD_DATABASE_PASSWORD'] %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+
+development:
+  <<: *default
+  host: <%= ENV['HOST_DATABASE_PASSWORD'] %>
+  database: working_minds_development
+
+test:
+  <<: *default
+  host: <%= ENV['HOST_DATABASE_PASSWORD'] %>
+  database: working_minds_test
+
+production:
+  <<: *default
+  database: working_minds_production
+  username: working_minds
+  password: <%= ENV["WORKING_MINDS_DATABASE_PASSWORD"] %>
