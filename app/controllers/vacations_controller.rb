@@ -3,11 +3,11 @@ class VacationsController < ApplicationController
 
   def index
     @vacations = Vacation.all
-    render json: @vactions, status: ok
+    render json: @vacations, status: :ok
   end
 
   def show
-    render json: @vacation, status: ok
+    render json: @vacation, status: :ok
   end
 
   def create
@@ -27,8 +27,6 @@ class VacationsController < ApplicationController
     end
   end
 
-  def delete
-  end
 
   private
 
