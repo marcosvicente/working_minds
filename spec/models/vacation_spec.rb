@@ -23,11 +23,11 @@ RSpec.describe Vacation, type: :model do
   subject { build(:vacation) }
 
   describe ".validate_employee_time_contract" do
-    let(:employee_valid) { create(:employee, date_contract: 1.year.ago) }
-    let(:vacation_valid) { build(:vacation, employee: employee_valid, date_init: 20.days.ago, date_end: Date.today) }
+    let!(:employee_valid) { create(:employee, date_contract: 1.year.ago) }
+    let(:vacation_valid) { build(:vacation, employee: employee_valid, date_init: Date.today, date_end: 20.days.from_now) }
 
-    let(:employee_invalid) { create(:employee, date_contract: Date.today ) }
-    let(:vacation_invalid) { build(:vacation, employee: employee_invalid, date_init: 20.days.ago, date_end: Date.today) }
+    let!(:employee_invalid) { create(:employee, date_contract: Date.today ) }
+    let(:vacation_invalid) { build(:vacation, employee: employee_invalid, date_init: Date.today, date_end: 20.days.from_now) }
 
     it "should be employee biger then 1 year of contract" do
       expect(vacation_valid).to be_valid
@@ -43,10 +43,10 @@ RSpec.describe Vacation, type: :model do
   end
 
   describe ".validate_dates_of_vacation" do
-    let(:employee) { create(:employee, date_contract: 1.year.ago) }
-    let(:vacation) { build(:vacation, employee:, date_init: 20.days.ago, date_end: Date.today) }
-    let(:vacation_35_days) { build(:vacation, employee:, date_init: 35.days.ago, date_end: Date.today) }
-    let(:vacation_5_days) { build(:vacation, employee:, date_init: 5.days.ago, date_end: Date.today) }
+    let!(:employee) { create(:employee, date_contract: 1.year.ago) }
+    let(:vacation) { build(:vacation, employee:, date_init: Date.today, date_end: 20.days.from_now) }
+    let(:vacation_35_days) { build(:vacation, employee:, date_init: Date.today, date_end: 35.days.from_now) }
+    let(:vacation_5_days) { build(:vacation, employee:, date_init: Date.today, date_end: 5.days.from_now) }
 
     it "should be employee bigger then 30 days and less 10 of vacation" do
       expect(vacation).to be_valid
@@ -65,21 +65,48 @@ RSpec.describe Vacation, type: :model do
 
   describe ".validate_overlapping_vacation" do
       let(:employee) { create(:employee, date_contract: 1.year.ago) }
-      let(:vacation) { create(:vacation, employee: , date_init: 20.days.ago, date_end: Date.today) }
-      let(:vacation2_valid) { build(:vacation, employee: , date_init: 100.days.ago, date_end: 120.days.ago) }
+      let!(:vacation) { create(:vacation, employee:, date_init: Date.today, date_end: 20.days.ago) }
+      let(:vacation2_valid) { build(:vacation, employee:, date_init: 100.days.ago, date_end: 110.days.ago) }
 
-      let(:vacation_invalid) { build(:vacation, employee: , date_init: 20.days.ago, date_end: Date.today) }
+      let(:vacation_invalid) { build(:vacation, employee:, date_init: Date.today, date_end: 20.days.ago) }
     
     it "should be valid without overlapping" do
-      vacation
       vacation2_valid.validate
       expect(vacation2_valid).to be_valid
     end
 
     it "should be return error with overlapping" do
-      vacation
       vacation_invalid.validate
       expect(vacation_invalid.errors.full_messages).to include("Date is overlapping")
+    end
+  end
+
+  describe ".validate_total_times_vacation" do
+    let(:employee) { create(:employee, date_contract: 1.year.ago) }
+    let!(:vacation) do
+      create(:vacation, employee: ,date_init: 40.days.from_now, date_end: 50.days.from_now)
+      create(:vacation, employee: ,date_init: 60.days.from_now, date_end: 70.days.from_now)
+      create(:vacation, employee: ,date_init: 80.days.from_now, date_end: 90.days.from_now)
+    end
+
+    let(:vacation_invalid) { build(:vacation, employee:, date_init: 100.days.ago, date_end: 120.days.ago) }
+
+    it "should be return error with more then 3 vacation" do
+      vacation_invalid.validate
+      expect(vacation_invalid.errors.full_messages).to include("Not be create more then 3 vacation")
+    end
+  end
+
+  describe ".validate_total_of_days_from_period" do
+    let(:employee) { create(:employee, date_contract: 1.year.ago) }
+    let!(:vacation) { create(:vacation, employee:, date_init: 10.days.from_now, date_end: 20.days.from_now) }
+
+    let(:vacation_invalid) { build(:vacation, employee:, date_init: 100.days.ago, date_end: 121.days.ago) }
+
+    it "should be return error with overlapping" do
+
+      vacation_invalid.validate
+      expect(vacation_invalid.errors.full_messages).to include("Not be create more then 30 days")
     end
   end
 end

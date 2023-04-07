@@ -1,5 +1,5 @@
 Rails.application.routes.draw do
-  resource "vacations"
+  resources "vacations"
   # Defines the root path route ("/")
   # root "articles#index"
 end

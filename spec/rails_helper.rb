@@ -16,7 +16,11 @@ begin
 rescue ActiveRecord::PendingMigrationError => e
   abort e.to_s.strip
 end
+
 RSpec.configure do |config|
+  config.include RequestHelpers, type: :request
+  config.include RequestHelpers, type: :controller
+
   config.fixture_path = "#{::Rails.root}/spec/fixtures"
 
   config.use_transactional_fixtures = true
@@ -24,13 +28,4 @@ RSpec.configure do |config|
   config.infer_spec_type_from_file_location!
 
   config.filter_rails_from_backtrace!
-  Shoulda::Matchers.configure do |cfg|
-    cfg.integrate do |with|
-      with.test_framework :rspec
-      with.library :rails
-
-      with.library :active_record
-      with.library :active_model
-    end
-  end
 end

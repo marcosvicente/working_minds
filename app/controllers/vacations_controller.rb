@@ -13,17 +13,17 @@ class VacationsController < ApplicationController
   def create
     @vacation = Vacation.new(vacation_params)
     if @vacation.save
-      return json: @vacation, status: created
+      render json: @vacation, status: :created
     else
-      return json: vacation, status: unprocessable_entity
+      render json: @vacation.errors.full_messages, status: :unprocessable_entity
     end
   end
 
   def update
     if @vacation.update(vacation_params)
-      return json: @vacation, status: ok
+      render json: @vacation, status: :created
     else
-      return json: vacation, status: unprocessable_entity
+      render json: @vacation.errors.full_messages, status: :unprocessable_entity
     end
   end
 
@@ -37,7 +37,7 @@ class VacationsController < ApplicationController
   end
 
   def vacation_params
-    params.(
+    params.require(:vacation).permit(
       :date_init,
       :date_end,
       :employee_id
