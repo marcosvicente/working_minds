@@ -8,4 +8,4 @@
 
 require 'factory_bot_rails'
 
-FactoryBot.create_list(:employee, 2)
+FactoryBot.create_list(:employee, 2, date_contract: 1.year.ago)

@@ -37,6 +37,8 @@ class Vacation < ApplicationRecord
   end
 
   def validate_employee_time_contract
+    return errors.add(:employee, "must be pass a employee") if self.employee.nil?
+
     if self.employee.date_contract.present? && self.employee.date_contract.next_year > Date.today
       return errors.add(:date, "must be within the past year")
     end
