@@ -10,6 +10,11 @@ class VacationsController < ApplicationController
     render json: @vacation, status: :ok
   end
 
+  def get_from_employee
+    @vacation = Vacation.where(employee_id: params[:employee_id])
+    render json: @vacation, status: :ok
+  end
+  
   def create
     @vacation = Vacation.new(vacation_params)
     if @vacation.save

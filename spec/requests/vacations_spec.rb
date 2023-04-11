@@ -38,6 +38,20 @@ RSpec.describe "Vacations", type: :request do
     end
   end
 
+  describe "GET /get_from_employee" do
+    let(:employee) { create(:employee, date_contract: 1.year.ago) }
+    let!(:vacation) { create(:vacation, date_init: 80.days.ago, date_end: 70.days.ago) }
+    it "returns http success" do
+
+      get "/vacations/get_from_employee/#{vacation.employee_id}"
+      expect(response).to have_http_status(:ok)
+
+      expect(response_body["employee_id"]).to eq(vacation.employee_id)
+      expect(response_body["date_init"].to_date).to eq(vacation.date_init)
+      expect(response_body["date_end"].to_date).to eq(vacation.date_end)
+    end
+  end
+
   describe "GET /create" do
     context 'success' do
       context "first vacation" do
